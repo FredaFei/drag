@@ -1,10 +1,8 @@
-### 拖动
-
 ### 效果预览
 + 单个拖动
   + [top](https://fredafei.github.io/drag/src/drag-scope-result.html)
   + [translate](https://fredafei.github.io/drag/src/drag-scope-translate-result.html)
-+ 多个多动
++ 多个拖动
   + [top](https://fredafei.github.io/drag/src/drag-scope-multiple.html)
   + [translate](https://fredafei.github.io/drag/src/drag-scope-translate-multiple.html)
 
