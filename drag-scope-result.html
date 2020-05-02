@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>drag</title>
+  <style lang="">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #box {
+      width: 100px;
+      height: 100px;
+      background: red;
+      position: absolute;
+    }
+
+    #father {
+      border: 1px solid blue;
+      width: 400px;
+      height: 400px;
+      margin: 20px;
+      position: relative;
+      top: 0;
+      left: 0;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="father">
+    <div id="box">box</div>
+  </div>
+
+  <script>
+    const drag = {
+      init(container, node) {
+        this.container = container
+        this.node = node
+        this.data()
+        this.bindEvent()
+      },
+      data() {
+        this.prevMousePosition = {
+          x1: 0,
+          y1: 0
+        }
+        this.currentMousePosition = {
+          x2: 0,
+          y2: 0
+        }
+        this.styles = {
+          left: 0,
+          top: 0
+        }
+        this.draggable = false
+      },
+      bindEvent() {
+        this.node.addEventListener('mousedown', e => this.onBoxMouseDown(e))
+        document.addEventListener('mousemove', e => this.onDocumentMouseMove(e))
+        document.addEventListener('mouseup', e => this.onDocumentMouseUp(e))
+      },
+      setBoxStyle() {
+        const { prevMousePosition, currentMousePosition, styles, container, node } = this
+        const { x1, y1 } = prevMousePosition
+        const { x2, y2 } = currentMousePosition
+        const width = container.offsetWidth - node.offsetWidth
+        const height = container.offsetHeight - node.offsetHeight
+        let top = y2 - y1 + styles.top
+        let left = x2 - x1 + styles.left
+        node.style.top = Math.min(height, Math.max(0, top)) + 'px'
+        node.style.left = Math.min(width, Math.max(0, left)) + 'px'
+      },
+      onBoxMouseDown(e) {
+        const { prevMousePosition, styles, node } = this
+        this.draggable = true
+        prevMousePosition.x1 = e.clientX
+        prevMousePosition.y1 = e.clientY
+        // 拖动元素拖动前的初始位置
+        const { offsetTop, offsetLeft } = node.getBoundingClientRect()
+        styles.top = offsetTop
+        styles.left = offsetLeft
+        e.target.onselectstart = function () {
+          return false
+        }
+      },
+      onDocumentMouseMove(e) {
+        if (this.draggable) {
+          this.currentMousePosition.x2 = e.clientX
+          this.currentMousePosition.y2 = e.clientY
+          this.setBoxStyle()
+        }
+      },
+      onDocumentMouseUp(e) {
+        this.draggable = false
+      }
+    }
+
+    const father = document.querySelector('#father')
+    const box = document.querySelector('#box')
+    drag.init(father, box)
+  </script>
+</body>
+
+</html>

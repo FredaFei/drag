@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>drag</title>
+  <style lang="">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #box {
+      width: 100px;
+      height: 100px;
+      background: red;
+      position: absolute;
+    }
+
+    #father {
+      border: 1px solid blue;
+      width: 400px;
+      height: 400px;
+      margin: 20px;
+      position: relative;
+      cursor: move;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="father">
+    <div id="box">box</div>
+  </div>
+
+  <script>
+    const father = document.querySelector('#father')
+    const box = document.querySelector('#box')
+
+
+    // ie9+
+    function getComputedTranslateXY(node) {
+      const transArr = [];
+      if (!window.getComputedStyle) return;
+      const style = getComputedStyle(node),
+        transform = style.transform || style.webkitTransform || style.mozTransform;
+      let mat = transform.match(/^matrix3d\((.+)\)$/);
+      if (mat) return parseFloat(mat[1].split(', ')[13]);
+      mat = transform.match(/^matrix\((.+)\)$/);
+      mat ? transArr.push(parseFloat(mat[1].split(', ')[4])) : transArr.push(0);
+      mat ? transArr.push(parseFloat(mat[1].split(', ')[5])) : transArr.push(0);
+      return transArr;
+    }
+
+    function setBoxStyle() {
+      const { x1, y1 } = prevMousePosition
+      const { x2, y2 } = currentMousePosition
+      const width = father.offsetWidth - box.offsetWidth
+      const height = father.offsetHeight - box.offsetHeight
+      let top = y2 - y1 + styles.top
+      let left = x2 - x1 + styles.left
+      const x = Math.min(width, Math.max(0, left)) + 'px'
+      const y = Math.min(height, Math.max(0, top)) + 'px'
+      box.style.transform = `translate(${x},${y})`
+    }
+    const prevMousePosition = {
+      x1: 0,
+      y1: 0
+    }
+    const currentMousePosition = {
+      x2: 0,
+      y2: 0
+    }
+    const styles = {
+      left: 0,
+      top: 0
+    }
+    let draggable = false
+
+    function onBoxMouseDown(e) {
+      draggable = true
+      prevMousePosition.x1 = e.clientX
+      prevMousePosition.y1 = e.clientY
+      const translateXY = getComputedTranslateXY(box)
+      styles.left = translateXY[0]
+      styles.top = translateXY[1]
+      e.target.onselectstart = function () {
+        return false
+      }
+    }
+    function onDocumentMouseMove(e) {
+      if (draggable) {
+        currentMousePosition.x2 = e.clientX
+        currentMousePosition.y2 = e.clientY
+        setBoxStyle()
+      }
+    }
+    function onDocumentMouseUp(e) {
+      draggable = false
+    }
+
+    function drag() {
+      box.addEventListener('mousedown', onBoxMouseDown)
+      document.addEventListener('mousemove', onDocumentMouseMove)
+      document.addEventListener('mouseup', onDocumentMouseUp)
+    }
+    drag()
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>鼠标模拟拖拽</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #app {
+      width: 100px;
+      height: 100px;
+      border: 1px solid blue;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="app"></div>
+
+  <script>
+    let dragging = false
+    let position = [0, 0]
+    app.addEventListener('mousedown', function (e) {
+      dragging = true
+      position = [e.clientX, e.clientY]
+    })
+    document.addEventListener('mousemove', function (e) {
+      if (!dragging) { return }
+      const x = e.clientX
+      const y = e.clientY
+      const left = x - position[0]
+      const top = y - position[1]
+      app.style.left = parseInt(app.style.left || 0) + left + 'px'
+      app.style.top = parseInt(app.style.top || 0) + top + 'px'
+      position = [x, y]
+    })
+    document.addEventListener('mouseup', function (e) {
+      dragging = false
+    })
+  </script>
+</body>
+
+</html>

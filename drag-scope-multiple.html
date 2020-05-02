@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+  <title>drag</title>
+  <style lang="">
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    #box {
+      width: 200px;
+      width: 60%;
+      height: 400px;
+      background: red;
+      position: absolute;
+      top: 50px;
+    }
+
+    #father {
+      border: 1px solid blue;
+      width: 800px;
+      height: 800px;
+      margin: 20px;
+      position: relative;
+      cursor: move;
+    }
+
+    .child {
+      width: 160px;
+      line-height: 30px;
+      position: absolute;
+      top: 40px;
+    }
+
+    .child:nth-child(1) {
+      top: 80px;
+      background: palevioletred;
+    }
+
+    .child:nth-child(2) {
+      top: 120px;
+      background: green;
+    }
+
+    .child:nth-child(3) {
+      top: 160px;
+      background: yellow;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="father">
+    <div id="box">
+      <div class="child">我是第三个(1)</div>
+      <div class="child">我是第三个(2)</div>
+      <div class="child">我是第三个(3)</div>
+    </div>
+  </div>
+
+  <script>
+
+    const dragCustom = {
+      init(wrapper, container, content) {
+        this.data(wrapper, container, content)
+        this.bindEvent()
+      },
+      data(wrapper, container, content) {
+        this.draggable = false
+        this.wrapper = wrapper
+        this.container = container
+        this.content = content
+        this.prevMousePosition = {
+          x1: 0,
+          y1: 0
+        }
+        this.currentMousePosition = {
+          x2: 0,
+          y2: 0
+        }
+        this.styles = {
+          left: 0,
+          top: 0
+        }
+        this.isDragChild = false
+      },
+      bindEvent() {
+        this.container.addEventListener('mousedown', e => this.onBoxMouseDown(e))
+        document.addEventListener('mousemove', e => this.onDocumentMouseMove(e))
+        document.addEventListener('mouseup', e => this.onDocumentMouseUp(e))
+      },
+      onBoxMouseDown(e) {
+        const { parentNode } = e.target
+        this.isDragChild = parentNode && parentNode === this.container
+        this.content = e.target
+        this.draggable = true
+        this.prevMousePosition.x1 = e.clientX
+        this.prevMousePosition.y1 = e.clientY
+        // 拖动元素拖动前的初始位置
+        const { offsetTop, offsetLeft } = this.content
+        this.styles.top = offsetTop
+        this.styles.left = offsetLeft
+        this.wrapper.onselectstart = function () {
+          return false
+        }
+      },
+      setBoxStyle() {
+        const { wrapper, content, styles } = this
+        const width = wrapper.offsetWidth - content.offsetWidth
+        const height = wrapper.offsetHeight - content.offsetHeight
+        const { x1, y1 } = this.prevMousePosition
+        const { x2, y2 } = this.currentMousePosition
+        const top = y2 - y1 + styles.top
+        const left = x2 - x1 + styles.left
+
+        const { offsetTop: maxTop, offsetLeft: maxLeft } = content.parentNode && content.parentNode
+        content.style.top = Math.min(height, Math.max(this.isDragChild ? -maxTop : 0, top)) + 'px'
+        content.style.left = Math.min(width, Math.max(this.isDragChild ? -maxLeft : 0, left)) + 'px'
+      },
+      onDocumentMouseMove(e) {
+        if (this.draggable) {
+          this.currentMousePosition.x2 = e.clientX
+          this.currentMousePosition.y2 = e.clientY
+          this.setBoxStyle()
+        }
+      },
+      onDocumentMouseUp(e) {
+        this.draggable = false
+        this.isDragChild = false
+      },
+    }
+
+    const grandfather = document.querySelector('#father')
+    const father = document.querySelector('#box')
+    const child = document.querySelectorAll('.child')
+
+    dragCustom.init(grandfather, father, child)
+  </script>
+</body>
+
+</html>
