@@ -82,9 +82,9 @@
         prevMousePosition.x1 = e.clientX
         prevMousePosition.y1 = e.clientY
         // 拖动元素拖动前的初始位置
-        const { offsetTop, offsetLeft } = node.getBoundingClientRect()
-        styles.top = offsetTop
-        styles.left = offsetLeft
+        const { offsetTop, offsetLeft } = node
+        this.styles.top = offsetTop
+        this.styles.left = offsetLeft
         e.target.onselectstart = function () {
           return false
         }

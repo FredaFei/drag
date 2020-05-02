@@ -5,8 +5,8 @@
   + [top](https://fredafei.github.io/drag/src/drag-scope-result.html)
   + [translate](https://fredafei.github.io/drag/src/drag-scope-translate-result.html)
 + 多个多动
-  + [top]((https://fredafei.github.io/drag/src/drag-scope-multiple.html)
-  + [translate]((https://fredafei.github.io/drag/src/drag-scope-translate-multiple.html)
+  + [top](https://fredafei.github.io/drag/src/drag-scope-multiple.html)
+  + [translate](https://fredafei.github.io/drag/src/drag-scope-translate-multiple.html)
 
 #### 交互场景：
 + 鼠标点击被拖拽的元素
